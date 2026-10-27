@@ -185,5 +185,10 @@ Use a mesma conta que criou o app. O Client ID é público por natureza; não h�
 
 ---
 
+**About AI:** Allycord is developed with AI assistance (Claude Code). The maintainer directs the design,
+reviews the changes, tests on real hardware and publishes the releases.
+*Sobre IA: o Allycord é desenvolvido com auxílio de IA (Claude Code). O mantenedor define o design, revisa
+as mudanças, testa no aparelho e publica as releases.*
+
 Allycord is not affiliated with or endorsed by Discord Inc., Microsoft or ASUS.
 MIT licensed.
