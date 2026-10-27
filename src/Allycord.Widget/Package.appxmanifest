@@ -8,7 +8,7 @@
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
   IgnorableNamespaces="mp uap uap3 desktop rescap">
 
-  <Identity Name="lopesleo.Allycord" Publisher="CN=lopesleo" Version="0.1.0.0" />
+  <Identity Name="lopesleo.Allycord" Publisher="CN=lopesleo" Version="0.1.1.0" />
 
   <mp:PhoneIdentity PhoneProductId="6f1c2a8e-4b7d-4e2a-9c51-3d8e0a7b5f21" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
 
