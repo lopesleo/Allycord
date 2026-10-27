@@ -98,6 +98,13 @@ namespace Allycord.Widget
                 case "toggle_deaf": _deaf = !_deaf; if (!_deaf) _mute = false; break;
                 case "leave": _inCall = false; break;
                 case "toggle_video": _video = !_video; break;
+                case "list_share_targets":
+                    return new JsonArray
+                    {
+                        Target(7120, "ForzaHorizon5", "Forza Horizon 5"),
+                        Target(5532, "Spotify", "Spotify Premium"),
+                        Target(4410, "msedge", "Guia de builds - Microsoft Edge"),
+                    };
                 case "toggle_screenshare":
                     _screen = !_screen;
                     return new JsonObject { ["changed"] = JsonValue.CreateBooleanValue(true) };
@@ -147,6 +154,13 @@ namespace Allycord.Widget
             m["volume"] = JsonValue.CreateNumberValue(volume);
             return m;
         }
+
+        static JsonObject Target(int pid, string name, string title) => new JsonObject
+        {
+            ["pid"] = JsonValue.CreateNumberValue(pid),
+            ["name"] = JsonValue.CreateStringValue(name),
+            ["title"] = JsonValue.CreateStringValue(title),
+        };
 
         static JsonObject Guild(string id, string name) => new JsonObject
         {

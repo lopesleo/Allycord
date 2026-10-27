@@ -176,10 +176,10 @@
                     </StackPanel>
                 </Border>
 
-                <Button Grid.Column="3" Style="{StaticResource XcIconButton}" VerticalAlignment="Center">
+                <Button x:Name="MenuButton" Grid.Column="3" Style="{StaticResource XcIconButton}" VerticalAlignment="Center">
                     <FontIcon FontFamily="{StaticResource XcIcons}" Glyph="&#xE712;" FontSize="16" />
                     <Button.Flyout>
-                        <MenuFlyout Placement="BottomEdgeAlignedRight">
+                        <MenuFlyout Placement="BottomEdgeAlignedRight" ShouldConstrainToRootBounds="True">
                             <MenuFlyoutItem x:Uid="MenuOpenDiscord" Text="Open Discord" Click="OpenDiscord_Click">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon FontFamily="{StaticResource XcIcons}" Glyph="&#xE8BD;" />
@@ -611,6 +611,28 @@
                                             </Border>
                                         </StackPanel>
                                         <TextBlock x:Uid="ShortcutTabs" Grid.Column="1" FontSize="14" VerticalAlignment="Center" />
+                                    </Grid>
+                                    <Rectangle Height="1" Fill="{StaticResource XcLine}" />
+                                    <Grid Padding="0,10" ColumnSpacing="12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="56" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Border Background="{StaticResource XcInk0}" CornerRadius="12" Width="24" Height="24" HorizontalAlignment="Left">
+                                            <TextBlock Text="B" FontSize="12" FontWeight="Bold" Foreground="#F25F5C" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Border>
+                                        <TextBlock x:Uid="ShortcutBack" Grid.Column="1" FontSize="14" VerticalAlignment="Center" />
+                                    </Grid>
+                                    <Rectangle Height="1" Fill="{StaticResource XcLine}" />
+                                    <Grid Padding="0,10" ColumnSpacing="12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="56" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Border Background="{StaticResource XcInk0}" CornerRadius="12" Width="24" Height="24" HorizontalAlignment="Left">
+                                            <TextBlock Text="&#x2261;" FontSize="14" FontWeight="Bold" Foreground="{StaticResource XcText2}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Border>
+                                        <TextBlock x:Uid="ShortcutMenu" Grid.Column="1" FontSize="14" VerticalAlignment="Center" />
                                     </Grid>
                                 </StackPanel>
                             </Grid>

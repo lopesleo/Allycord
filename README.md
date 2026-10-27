@@ -30,18 +30,18 @@ Press the Xbox button, and it's there. Sister project of [Discord-Lite](https://
 
 - **Call** — mute, deafen, leave (with a one-tap *Rejoin* if you hit it by mistake), live call timer.
 - **Who's talking** — everyone in the channel, with a speaking ring and mute/deafen badges.
-- **Camera and screen share** toggles, shown only when your Discord offers them over RPC. Where Discord has Go Live
+- **Camera and screen share** (pick which app to share), shown only when your Discord offers them over RPC. Where Discord has Go Live
   disabled (e.g. Brazil, by regulatory order) Allycord tells you and hides the button — it never works around it.
 - **Per-person volume** and *mute for me* (tap a person).
 - **Channels** — recent channels (one tap to rejoin), favorite servers, search, and a preview of who's in each voice channel.
 - **Audio** — microphone and output volume.
 - **Pinned overlay** — pin the widget and, with Game Bar closed, a small pill over your game shows who's speaking.
-- **Controller first** — `Y` mute · `X` deafen · `LB`/`RB` switch tabs · `B` back.
+- **Controller first** — `Y` mute · `X` deafen · `LB`/`RB` switch tabs · `B` back · `≡` menu.
 - English and Portuguese.
 
 <p align="center">
   <img src="docs/screenshots/audio.png" width="240" alt="Audio">
-  <img src="docs/screenshots/idle.png" width="240" alt="Not in a call">
+  <img src="docs/screenshots/share.png" width="240" alt="Pick the app to share">
 </p>
 <p align="center">
   <img src="docs/screenshots/pinned.png" width="420" alt="Pinned overlay over the game">
@@ -136,13 +136,13 @@ Aperte o botão Xbox e está lá.
 
 - **Chamada** — mutar, ensurdecer, sair (com *Voltar* se sair sem querer), timer da chamada.
 - **Quem está falando** — todos no canal, com anel de fala e indicadores de mudo/surdo.
-- **Câmera e compartilhamento de tela**, só quando o seu Discord oferece pelo RPC. Onde o Discord desativou o Go Live
+- **Câmera e compartilhamento de tela** (escolha qual app), só quando o seu Discord oferece pelo RPC. Onde o Discord desativou o Go Live
   (ex.: Brasil, por ordem da ANPD), o Allycord avisa e esconde o botão — nunca contorna o bloqueio.
 - **Volume por pessoa** e *silenciar para mim* (toque na pessoa).
 - **Canais** — recentes (um toque para voltar), servidores favoritos, busca e quem está em cada canal.
 - **Áudio** — volume do microfone e da saída.
 - **Overlay fixado** — com o widget fixado e o Game Bar fechado, uma pílula sobre o jogo mostra quem fala.
-- **Feito para controle** — `Y` mutar · `X` ensurdecer · `LB`/`RB` trocar aba · `B` voltar.
+- **Feito para controle** — `Y` mutar · `X` ensurdecer · `LB`/`RB` trocar aba · `B` voltar · `≡` menu.
 
 Leve de propósito: sem animações em loop, imagens no tamanho exibido e nada de polling. Medido em
 Release, conectado e parado: bridge ~0% de CPU e ~10 MB; widget ~0,01% de CPU.

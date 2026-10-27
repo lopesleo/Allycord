@@ -92,6 +92,8 @@ namespace Allycord.Widget
                 if (_demo.Tab > 0) SelectTab(_demo.Tab);
                 if (_demo.Has("open") && _guilds.Count > 0) await OpenGuildAsync(_guilds[0]);
                 if (_demo.Has("search")) SearchBox.Text = "br";
+                if (_demo.Has("share"))
+                    _ = Dispatcher.RunAsync(CoreDispatcherPriority.Low, () => Screen_Click(ScreenButton, null));
                 ApplyDisplayMode();
                 FocusDock();
                 return;
@@ -318,15 +320,45 @@ namespace Allycord.Widget
         async void Video_Click(object sender, RoutedEventArgs e) => await CallAsync("toggle_video");
 
         /// <summary>
-        /// Discord accepts the command even where Go Live is off (e.g. Brazil), and simply doesn't start.
-        /// When nothing changes, say so and hide the button for this session instead of failing silently.
+        /// Stop if sharing; otherwise pick the app to share. RPC only takes a process (no whole-monitor option).
         /// </summary>
         async void Screen_Click(object sender, RoutedEventArgs e)
         {
-            var wasActive = _screenActive;
-            var result = await CallAsync("toggle_screenshare");
+            if (_screenActive)
+            {
+                await CallAsync("toggle_screenshare");
+                return;
+            }
+
+            var targets = await CallAsync("list_share_targets");
+            if (targets == null || targets.ValueType != JsonValueType.Array) return;
+
+            // Keep the menu inside the widget: a windowed popup could land outside Game Bar's surface.
+            var menu = new MenuFlyout { Placement = Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode.Bottom, ShouldConstrainToRootBounds = true };
+            menu.Items.Add(new MenuFlyoutItem { Text = T("ShareWhichApp"), IsEnabled = false });
+            foreach (var value in targets.GetArray())
+            {
+                var target = value.GetObject();
+                var pid = Json.Num(target, "pid");
+                var title = Json.Str(target, "title") ?? "";
+                if (title.Length > 42) title = title.Substring(0, 41) + "\u2026";
+                var item = new MenuFlyoutItem { Text = $"{title}  \u00B7  {Json.Str(target, "name")}" };
+                item.Click += async (s2, a2) => await ShareAsync(pid);
+                menu.Items.Add(item);
+            }
+            if (menu.Items.Count == 1) menu.Items.Add(new MenuFlyoutItem { Text = T("NoShareTargets"), IsEnabled = false });
+            menu.ShowAt(ScreenButton);
+        }
+
+        /// <summary>
+        /// Discord accepts the command even where Go Live is off (e.g. Brazil), and simply doesn't start.
+        /// When nothing changes, say so and hide the button for this session instead of failing silently.
+        /// </summary>
+        async Task ShareAsync(double pid)
+        {
+            var result = await CallAsync("toggle_screenshare", new JsonObject { ["pid"] = JsonValue.CreateNumberValue(pid) });
             if (result == null || result.ValueType != JsonValueType.Object) return;
-            if (!Json.Bool(result.GetObject(), "changed") && !wasActive)
+            if (!Json.Bool(result.GetObject(), "changed"))
             {
                 _screenBlocked = true;
                 ScreenButton.Visibility = Visibility.Collapsed;
@@ -523,7 +555,15 @@ namespace Allycord.Widget
         protected override async void OnKeyDown(KeyRoutedEventArgs e)
         {
             base.OnKeyDown(e);
-            if (e.Handled || MainView.Visibility != Visibility.Visible || FocusManager.GetFocusedElement() is TextBox) return;
+            if (e.Handled) return;
+            // Menu (≡) opens the ⋯ menu from anywhere, like a game's pause menu.
+            if (e.Key == VirtualKey.GamepadMenu && !_pinned)
+            {
+                e.Handled = true;
+                MenuButton.Flyout.ShowAt(MenuButton);
+                return;
+            }
+            if (MainView.Visibility != Visibility.Visible || FocusManager.GetFocusedElement() is TextBox) return;
 
             switch (e.Key)
             {
@@ -682,7 +722,7 @@ namespace Allycord.Widget
             panel.Children.Add(slider);
             panel.Children.Add(toggle);
 
-            var flyout = new Flyout { Content = panel };
+            var flyout = new Flyout { Content = panel, ShouldConstrainToRootBounds = true };
             flyout.Closed += (s, a) => send.Flush();
             flyout.ShowAt((FrameworkElement)MembersGrid.ContainerFromItem(member) ?? MembersGrid);
         }

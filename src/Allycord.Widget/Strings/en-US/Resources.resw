@@ -75,4 +75,8 @@
   <data name="Camera" xml:space="preserve"><value>Camera</value></data>
   <data name="ScreenShare" xml:space="preserve"><value>Share screen</value></data>
   <data name="ScreenUnavailable" xml:space="preserve"><value>Discord didn't start screen sharing. It may be unavailable for your account or region.</value></data>
+  <data name="ShareWhichApp" xml:space="preserve"><value>Share which app?</value></data>
+  <data name="NoShareTargets" xml:space="preserve"><value>No open apps to share.</value></data>
+  <data name="ShortcutBack.Text" xml:space="preserve"><value>Back (inside a server)</value></data>
+  <data name="ShortcutMenu.Text" xml:space="preserve"><value>Menu</value></data>
 </root>

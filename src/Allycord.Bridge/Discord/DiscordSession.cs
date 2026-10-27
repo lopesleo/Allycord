@@ -391,12 +391,17 @@ sealed class DiscordSession
             case "toggle_video":
                 await ipc.SendAsync("TOGGLE_VIDEO");
                 return null;
+            case "list_share_targets":
+                return ShareTargets();
             case "toggle_screenshare":
                 // Discord accepts the command even where Go Live is unavailable, it just doesn't start.
                 // Report whether the state actually changed so the widget can say so.
+                // Optional "pid": share that app (the only target RPC accepts; no whole-monitor option).
                 var wait = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
                 _screenChanged = wait;
-                await ipc.SendAsync("TOGGLE_SCREENSHARE");
+                var shareArgs = new JsonObject();
+                if (args["pid"] is JsonValue pidValue) shareArgs["pid"] = Math.Max(0, (int)pidValue);
+                await ipc.SendAsync("TOGGLE_SCREENSHARE", shareArgs);
                 var changedInTime = await Task.WhenAny(wait.Task, Task.Delay(TimeSpan.FromSeconds(4))) == wait.Task;
                 _screenChanged = null;
                 return new JsonObject { ["changed"] = changedInTime };
@@ -460,6 +465,40 @@ sealed class DiscordSession
             default:
                 throw new InvalidOperationException($"Unknown method {method}");
         }
+    }
+
+    /// <summary>
+    /// Apps with a visible window that Discord could share, heaviest first (the game is usually on top).
+    /// Built only when the user opens the picker.
+    /// </summary>
+    static JsonArray ShareTargets()
+    {
+        var skip = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "Discord", "DiscordPTB", "DiscordCanary", "Allycord.Widget", "Allycord.Bridge",
+            "TextInputHost", "ApplicationFrameHost", "SystemSettings", "ShellExperienceHost", "StartMenuExperienceHost",
+        };
+        var targets = new List<(int Pid, string Name, string Title, long Memory)>();
+        foreach (var p in Process.GetProcesses())
+        {
+            using (p)
+            {
+                try
+                {
+                    if (p.MainWindowHandle == IntPtr.Zero || string.IsNullOrWhiteSpace(p.MainWindowTitle) || skip.Contains(p.ProcessName)
+                        || !Win32.IsAltTabWindow(p.MainWindowHandle))
+                        continue;
+                    targets.Add((p.Id, p.ProcessName, p.MainWindowTitle, p.WorkingSet64));
+                }
+                catch { } // exited, or access denied
+            }
+        }
+        return new JsonArray(targets.OrderByDescending(t => t.Memory).Take(12).Select(t => (JsonNode)new JsonObject
+        {
+            ["pid"] = t.Pid,
+            ["name"] = t.Name,
+            ["title"] = t.Title,
+        }).ToArray());
     }
 
     /// <summary>Subscribes if this Discord build knows the event; "Invalid event" (4004) means unsupported.</summary>
