@@ -30,6 +30,8 @@ Press the Xbox button, and it's there. Sister project of [Discord-Lite](https://
 
 - **Call** — mute, deafen, leave (with a one-tap *Rejoin* if you hit it by mistake), live call timer.
 - **Who's talking** — everyone in the channel, with a speaking ring and mute/deafen badges.
+- **Camera and screen share** toggles, shown only when your Discord offers them over RPC. Where Discord has Go Live
+  disabled (e.g. Brazil, by regulatory order) Allycord tells you and hides the button — it never works around it.
 - **Per-person volume** and *mute for me* (tap a person).
 - **Channels** — recent channels (one tap to rejoin), favorite servers, search, and a preview of who's in each voice channel.
 - **Audio** — microphone and output volume.
@@ -134,6 +136,8 @@ Aperte o botão Xbox e está lá.
 
 - **Chamada** — mutar, ensurdecer, sair (com *Voltar* se sair sem querer), timer da chamada.
 - **Quem está falando** — todos no canal, com anel de fala e indicadores de mudo/surdo.
+- **Câmera e compartilhamento de tela**, só quando o seu Discord oferece pelo RPC. Onde o Discord desativou o Go Live
+  (ex.: Brasil, por ordem da ANPD), o Allycord avisa e esconde o botão — nunca contorna o bloqueio.
 - **Volume por pessoa** e *silenciar para mim* (toque na pessoa).
 - **Canais** — recentes (um toque para voltar), servidores favoritos, busca e quem está em cada canal.
 - **Áudio** — volume do microfone e da saída.

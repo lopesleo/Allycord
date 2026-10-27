@@ -38,7 +38,10 @@ if (consoleMode)
             try
             {
                 var payload = parts.Length > 1 ? JsonNode.Parse(parts[1])!.AsObject() : new JsonObject();
-                var result = await session.HandleAsync(parts[0], payload);
+                // "rpc {"cmd":"X","args":{...},"evt":"Y"}" sends a raw RPC command (diagnostics only).
+                var result = parts[0] == "rpc"
+                    ? await session.RawAsync((string)payload["cmd"]!, payload["args"]?.DeepClone().AsObject() ?? new JsonObject(), (string?)payload["evt"])
+                    : await session.HandleAsync(parts[0], payload);
                 Console.WriteLine($"<< {parts[0]}: {result?.ToJsonString() ?? "ok"}");
             }
             catch (Exception ex) { Console.WriteLine($"<< {parts[0]} ERROR: {ex.Message}"); }

@@ -32,6 +32,11 @@ sealed class DiscordSession
     readonly Dictionary<string, JsonObject> _members = new();
     readonly HashSet<string> _speaking = new();
 
+    // Camera / screen share: offered only when this Discord build's RPC knows the state events.
+    // (Go Live is disabled in some regions; we detect that, never work around it.)
+    bool _videoSupported, _videoActive, _screenSupported, _screenActive;
+    TaskCompletionSource<bool>? _screenChanged;
+
     public DiscordSession(TokenStore tokens, AppConfig config)
     {
         _tokens = tokens;
@@ -194,6 +199,13 @@ sealed class DiscordSession
         SetStatus("ready");
         await ipc.SubscribeAsync("VOICE_SETTINGS_UPDATE");
         await ipc.SubscribeAsync("VOICE_CHANNEL_SELECT");
+        var video = await TrySubscribeAsync(ipc, "VIDEO_STATE_UPDATE");
+        var screen = await TrySubscribeAsync(ipc, "SCREENSHARE_STATE_UPDATE");
+        lock (_gate)
+        {
+            _videoSupported = video;
+            _screenSupported = screen;
+        }
         ApplyVoiceSettings(await ipc.SendAsync("GET_VOICE_SETTINGS"));
         await RefreshSelectedChannelAsync();
         return true;
@@ -237,6 +249,25 @@ sealed class DiscordSession
                     else _speaking.Remove(userId);
                 }
                 MarkDirty();
+                break;
+            case "VIDEO_STATE_UPDATE":
+                lock (_gate) _videoActive = data.TryGetProperty("active", out var va) && va.ValueKind == JsonValueKind.True;
+                MarkDirty();
+                break;
+            case "SCREENSHARE_STATE_UPDATE":
+                bool active = data.TryGetProperty("active", out var sa) && sa.ValueKind == JsonValueKind.True;
+                bool changed;
+                lock (_gate)
+                {
+                    changed = active != _screenActive;
+                    _screenActive = active;
+                }
+                if (changed) _screenChanged?.TrySetResult(active);
+                MarkDirty();
+                break;
+            default:
+                // Only subscribed events arrive here, so this stays quiet; useful when probing new ones.
+                Log.Info($"Event {evt}: {data}");
                 break;
         }
     }
@@ -357,6 +388,18 @@ sealed class DiscordSession
                 lock (_gate) mute = !_mute;
                 ApplyVoiceSettings(await ipc.SendAsync("SET_VOICE_SETTINGS", new JsonObject { ["mute"] = mute }));
                 return null;
+            case "toggle_video":
+                await ipc.SendAsync("TOGGLE_VIDEO");
+                return null;
+            case "toggle_screenshare":
+                // Discord accepts the command even where Go Live is unavailable, it just doesn't start.
+                // Report whether the state actually changed so the widget can say so.
+                var wait = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+                _screenChanged = wait;
+                await ipc.SendAsync("TOGGLE_SCREENSHARE");
+                var changedInTime = await Task.WhenAny(wait.Task, Task.Delay(TimeSpan.FromSeconds(4))) == wait.Task;
+                _screenChanged = null;
+                return new JsonObject { ["changed"] = changedInTime };
             case "toggle_deaf":
                 bool deaf;
                 lock (_gate) deaf = !_deaf;
@@ -417,6 +460,28 @@ sealed class DiscordSession
             default:
                 throw new InvalidOperationException($"Unknown method {method}");
         }
+    }
+
+    /// <summary>Subscribes if this Discord build knows the event; "Invalid event" (4004) means unsupported.</summary>
+    static async Task<bool> TrySubscribeAsync(IpcClient ipc, string evt)
+    {
+        try
+        {
+            await ipc.SubscribeAsync(evt);
+            return true;
+        }
+        catch (DiscordRpcException ex)
+        {
+            Log.Info($"{evt} not available: {ex.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>Diagnostics (console mode only): send any RPC command, e.g. to check what this Discord build supports.</summary>
+    public async Task<JsonNode?> RawAsync(string cmd, JsonObject args, string? evt)
+    {
+        var data = await RequireReady().SendAsync(cmd, args, evt);
+        return data.ValueKind == JsonValueKind.Undefined ? null : JsonNode.Parse(data.GetRawText());
     }
 
     /// <summary>A voice channel with a preview of who's in it (first few people + total).</summary>
@@ -493,6 +558,7 @@ sealed class DiscordSession
     {
         lock (_gate)
         {
+            _videoSupported = _videoActive = _screenSupported = _screenActive = false;
             _user = null;
             _channelId = _channelName = _guildId = _guildName = null;
             _joinedAt = 0;
@@ -548,6 +614,13 @@ sealed class DiscordSession
                     ["joined_at"] = _joinedAt,
                 },
                 ["members"] = members,
+                ["media"] = new JsonObject
+                {
+                    ["video_supported"] = _videoSupported,
+                    ["video_active"] = _videoActive,
+                    ["screen_supported"] = _screenSupported,
+                    ["screen_active"] = _screenActive,
+                },
             }.ToJsonString();
         }
     }

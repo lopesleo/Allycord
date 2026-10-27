@@ -31,6 +31,7 @@ namespace Allycord.Widget
         DemoMode _demo;
         string _status, _error, _userId, _userName, _avatarUrl, _currentChannelId, _currentGuildId, _statusAction, _clientId, _recentKey;
         bool _bridgeFailed, _applyingState, _loaded, _setupRequested, _mute, _deaf, _pinned, _guildsLoaded;
+        bool _screenActive, _screenBlocked;
         long _joinedAt;
         int _tab;
         double _inputVolume = 100, _outputVolume = 100;
@@ -53,6 +54,11 @@ namespace Allycord.Widget
             _outputDebounce = new Debouncer(() => SetVolume("set_output_volume", OutputSlider.Value));
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
+            foreach (var (button, key) in new[] { (VideoButton, "Camera"), (ScreenButton, "ScreenShare") })
+            {
+                ToolTipService.SetToolTip(button, T(key));
+                Windows.UI.Xaml.Automation.AutomationProperties.SetName(button, T(key));
+            }
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -282,12 +288,50 @@ namespace Allycord.Widget
                 else if (row is RecentVm r) r.IsCurrent = r.ChannelId == _currentChannelId;
             }
 
+            ApplyMedia(Json.Obj(state, "media"), inCall);
             SyncMembers(Json.Arr(state, "members"));
             MembersCountChip.Text = Members.Count.ToString();
             MemberCountText.Text = Members.Count == 1 ? T("OnePerson") : string.Format(T("People"), Members.Count);
 
             UpdatePinned();
             Render();
+        }
+
+        void ApplyMedia(JsonObject media, bool inCall)
+        {
+            var videoActive = Json.Bool(media, "video_active");
+            _screenActive = Json.Bool(media, "screen_active");
+            if (_screenActive) _screenBlocked = false; // it worked after all (e.g. picked a screen in Discord)
+
+            VideoButton.Visibility = inCall && Json.Bool(media, "video_supported") ? Visibility.Visible : Visibility.Collapsed;
+            ScreenButton.Visibility = inCall && Json.Bool(media, "screen_supported") && !_screenBlocked ? Visibility.Visible : Visibility.Collapsed;
+            StyleMediaButton(VideoButton, VideoIcon, videoActive);
+            StyleMediaButton(ScreenButton, ScreenIcon, _screenActive);
+        }
+
+        static void StyleMediaButton(Button button, FontIcon icon, bool active)
+        {
+            button.Background = active ? Res("XcLiveSoft") : new SolidColorBrush(Windows.UI.Color.FromArgb(0x1F, 0xFF, 0xFF, 0xFF));
+            icon.Foreground = Res(active ? "XcLive" : "XcText");
+        }
+
+        async void Video_Click(object sender, RoutedEventArgs e) => await CallAsync("toggle_video");
+
+        /// <summary>
+        /// Discord accepts the command even where Go Live is off (e.g. Brazil), and simply doesn't start.
+        /// When nothing changes, say so and hide the button for this session instead of failing silently.
+        /// </summary>
+        async void Screen_Click(object sender, RoutedEventArgs e)
+        {
+            var wasActive = _screenActive;
+            var result = await CallAsync("toggle_screenshare");
+            if (result == null || result.ValueType != JsonValueType.Object) return;
+            if (!Json.Bool(result.GetObject(), "changed") && !wasActive)
+            {
+                _screenBlocked = true;
+                ScreenButton.Visibility = Visibility.Collapsed;
+                ShowToast(T("ScreenUnavailable"), info: true);
+            }
         }
 
         void ApplyVolumes()

@@ -330,13 +330,39 @@
                                     <TextBlock x:Name="GuildNameText" Style="{StaticResource XcCaption}" Foreground="#9BF00B" TextTrimming="CharacterEllipsis" />
                                     <TextBlock x:Name="ChannelNameText" FontFamily="{StaticResource XcDisplay}" FontSize="26" FontWeight="SemiBold"
                                                TextTrimming="CharacterEllipsis" MaxLines="1" />
-                                    <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,8,0,0">
+                                    <Grid Margin="0,8,0,0">
+
+                                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                                         <Ellipse Width="8" Height="8" Fill="{StaticResource XcLive}" VerticalAlignment="Center" />
                                         <TextBlock x:Name="CallTimerText" FontFamily="{StaticResource XcDisplay}" FontSize="14" FontWeight="SemiBold"
                                                    Foreground="{StaticResource XcLive}" Typography.NumeralAlignment="Tabular" VerticalAlignment="Center" />
                                         <TextBlock Text="·" Foreground="#6E9E6E" VerticalAlignment="Center" />
                                         <TextBlock x:Name="MemberCountText" FontSize="14" Foreground="#CFE6CF" VerticalAlignment="Center" />
                                     </StackPanel>
+
+                                        <!-- Shown only when this Discord build offers them over RPC -->
+
+                                        <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+
+                                            <Button x:Name="VideoButton" Style="{StaticResource XcButton}" Width="40" Height="36" Padding="0" CornerRadius="12"
+
+                                                    Background="#1FFFFFFF" Visibility="Collapsed" Click="Video_Click">
+
+                                                <FontIcon x:Name="VideoIcon" FontFamily="{StaticResource XcIcons}" Glyph="&#xE714;" FontSize="16" />
+
+                                            </Button>
+
+                                            <Button x:Name="ScreenButton" Style="{StaticResource XcButton}" Width="40" Height="36" Padding="0" CornerRadius="12"
+
+                                                    Background="#1FFFFFFF" Visibility="Collapsed" Click="Screen_Click">
+
+                                                <FontIcon x:Name="ScreenIcon" FontFamily="{StaticResource XcIcons}" Glyph="&#xEC15;" FontSize="16" />
+
+                                            </Button>
+
+                                        </StackPanel>
+
+                                    </Grid>
                                 </StackPanel>
                             </Grid>
 

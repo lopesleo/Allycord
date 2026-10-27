@@ -72,4 +72,7 @@
   <data name="LeftChannel" xml:space="preserve"><value>Você saiu de {0}</value></data>
   <data name="Undo" xml:space="preserve"><value>Voltar</value></data>
   <data name="JoinChip.Text" xml:space="preserve"><value>Entrar</value></data>
+  <data name="Camera" xml:space="preserve"><value>Câmera</value></data>
+  <data name="ScreenShare" xml:space="preserve"><value>Compartilhar tela</value></data>
+  <data name="ScreenUnavailable" xml:space="preserve"><value>O Discord não iniciou o compartilhamento de tela. Ele pode estar indisponível na sua conta ou região.</value></data>
 </root>

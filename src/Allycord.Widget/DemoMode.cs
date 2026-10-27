@@ -12,7 +12,7 @@ namespace Allycord.Widget
     {
         readonly string _scene;
         readonly long _joinedAt = DateTimeOffset.UtcNow.AddMinutes(-47).AddSeconds(-12).ToUnixTimeMilliseconds();
-        bool _mute, _deaf, _inCall;
+        bool _mute, _deaf, _inCall, _video, _screen;
         int _input = 82, _output = 100;
 
         DemoMode(string scene)
@@ -57,6 +57,13 @@ namespace Allycord.Widget
                 },
                 ["channel"] = JsonValue.CreateNullValue(),
                 ["members"] = new JsonArray(),
+                ["media"] = new JsonObject
+                {
+                    ["video_supported"] = JsonValue.CreateBooleanValue(true),
+                    ["video_active"] = JsonValue.CreateBooleanValue(_video),
+                    ["screen_supported"] = JsonValue.CreateBooleanValue(true),
+                    ["screen_active"] = JsonValue.CreateBooleanValue(_screen),
+                },
             };
 
             if (status == "ready" && _inCall)
@@ -90,6 +97,10 @@ namespace Allycord.Widget
                 case "toggle_mute": _mute = !_mute; break;
                 case "toggle_deaf": _deaf = !_deaf; if (!_deaf) _mute = false; break;
                 case "leave": _inCall = false; break;
+                case "toggle_video": _video = !_video; break;
+                case "toggle_screenshare":
+                    _screen = !_screen;
+                    return new JsonObject { ["changed"] = JsonValue.CreateBooleanValue(true) };
                 case "join": _inCall = true; break;
                 case "set_input_volume": _input = (int)args.GetNamedNumber("volume"); break;
                 case "set_output_volume": _output = (int)args.GetNamedNumber("volume"); break;

@@ -72,4 +72,7 @@
   <data name="LeftChannel" xml:space="preserve"><value>You left {0}</value></data>
   <data name="Undo" xml:space="preserve"><value>Rejoin</value></data>
   <data name="JoinChip.Text" xml:space="preserve"><value>Join</value></data>
+  <data name="Camera" xml:space="preserve"><value>Camera</value></data>
+  <data name="ScreenShare" xml:space="preserve"><value>Share screen</value></data>
+  <data name="ScreenUnavailable" xml:space="preserve"><value>Discord didn't start screen sharing. It may be unavailable for your account or region.</value></data>
 </root>
