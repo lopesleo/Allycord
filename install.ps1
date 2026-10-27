@@ -64,7 +64,14 @@ function Install-Allycord {
             try { Add-AppxPackage -Path $dep.FullName -ErrorAction Stop } catch { } # already installed (same or newer)
         }
         Get-Process Allycord.Widget, Allycord.Bridge -ErrorAction SilentlyContinue | Stop-Process -Force
-        Add-AppxPackage -Path $msix.FullName -ForceApplicationShutdown
+        try {
+            Add-AppxPackage -Path $msix.FullName -ForceApplicationShutdown
+        }
+        catch {
+            # 0x80073CFB on a dev machine: a loose-file (Developer Mode) build is registered.
+            if ($_.Exception.Message -notmatch '80073CFB') { throw }
+            throw "A development build of Allycord is registered on this PC. Remove it first: Get-AppxPackage lopesleo.Allycord | Remove-AppxPackage"
+        }
 
         Write-Host ''
         Write-Host "Allycord $($release.tag_name) installed." -ForegroundColor Green
