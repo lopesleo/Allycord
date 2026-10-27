@@ -50,7 +50,9 @@ if ($Release) {
             -FriendlyName 'Allycord dev signing' -CertStoreLocation Cert:\CurrentUser\My `
             -TextExtension @('2.5.29.37={text}1.3.6.1.5.5.7.3.3', '2.5.29.19={text}')
     }
-    $msbuildArgs += '/p:AppxPackageSigningEnabled=true', "/p:PackageCertificateThumbprint=$($cert.Thumbprint)"
+    $msbuildArgs += '/p:AppxPackageSigningEnabled=true', "/p:PackageCertificateThumbprint=$($cert.Thumbprint)",
+        # Don't ship Visual Studio's install-script telemetry to users.
+        '/p:AppxLogTelemetryFromSideloadingScript=false'
 }
 
 Write-Host "==> Building widget ($config)" -ForegroundColor Cyan
@@ -70,7 +72,16 @@ if ($Release) {
     New-Item -ItemType Directory -Force $dist | Out-Null
     $zip = Join-Path $dist "Allycord-$version-x64.zip"
     if (Test-Path $zip) { Remove-Item $zip }
-    Compress-Archive -Path (Join-Path $pkgDir.FullName '*') -DestinationPath $zip
+
+    # Only what an x64 install needs: no other-architecture dependencies, symbols or telemetry.
+    $stage = Join-Path $dist 'stage'
+    if (Test-Path $stage) { Remove-Item $stage -Recurse -Force }
+    Copy-Item $pkgDir.FullName $stage -Recurse
+    Get-ChildItem (Join-Path $stage 'Dependencies') -Directory | Where-Object Name -ne 'x64' | Remove-Item -Recurse -Force
+    Get-ChildItem $stage -Filter *.appxsym | Remove-Item -Force
+    Remove-Item (Join-Path $stage 'TelemetryDependencies') -Recurse -Force -ErrorAction SilentlyContinue
+    Compress-Archive -Path (Join-Path $stage '*') -DestinationPath $zip
+    Remove-Item $stage -Recurse -Force
     Write-Host "Release zip: $zip" -ForegroundColor Green
     return
 }
