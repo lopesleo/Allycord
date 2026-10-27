@@ -1,0 +1,9 @@
+bin/
+obj/
+AppPackages/
+BundleArtifacts/
+*.user
+.vs/
+src/Xcord.Widget/Bridge/
+*.pfx
+dist/
