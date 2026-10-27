@@ -1,0 +1,649 @@
+<Page
+    x:Class="Allycord.Widget.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Allycord.Widget"
+    Background="Transparent"
+    Foreground="{StaticResource XcText}"
+    FontFamily="{StaticResource XcFont}"
+    XYFocusKeyboardNavigation="Enabled">
+
+    <Page.Resources>
+        <local:BrowseTemplateSelector x:Key="BrowseSelector">
+            <local:BrowseTemplateSelector.Section>
+                <DataTemplate x:DataType="local:SectionRow">
+                    <TextBlock Text="{x:Bind Title}" Style="{StaticResource XcCaption}" Margin="10,16,0,6" />
+                </DataTemplate>
+            </local:BrowseTemplateSelector.Section>
+            <local:BrowseTemplateSelector.Recent>
+                <DataTemplate x:DataType="local:RecentVm">
+                    <Grid Padding="10,8" ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid Width="40" Height="40">
+                            <Border CornerRadius="12" Background="{x:Bind Tint}" />
+                            <FontIcon FontFamily="{StaticResource XcIcons}" Glyph="&#xE767;" FontSize="16" Foreground="White" />
+                        </Grid>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="{x:Bind ChannelName}" FontSize="15" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" MaxLines="1" />
+                            <TextBlock Text="{x:Bind GuildName}" FontSize="12" Foreground="{StaticResource XcText3}" TextTrimming="CharacterEllipsis" MaxLines="1" />
+                        </StackPanel>
+                        <Border Grid.Column="2" Background="{StaticResource XcLiveSoft}" CornerRadius="10" Padding="8,3"
+                                VerticalAlignment="Center" Visibility="{x:Bind IsCurrent, Mode=OneWay}">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <Ellipse Width="6" Height="6" Fill="{StaticResource XcLive}" VerticalAlignment="Center" />
+                                <TextBlock x:Uid="ConnectedChip" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource XcLive}" />
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="2" Background="{StaticResource XcBrandSoft}" CornerRadius="10" Padding="10,4"
+                                VerticalAlignment="Center" Visibility="{x:Bind IsJoinable, Mode=OneWay}">
+                            <TextBlock x:Uid="JoinChip" FontSize="11" FontWeight="SemiBold" Foreground="#8FE38F" />
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </local:BrowseTemplateSelector.Recent>
+            <local:BrowseTemplateSelector.Guild>
+                <DataTemplate x:DataType="local:GuildVm">
+                    <Grid Padding="10,7" ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid Width="40" Height="40">
+                            <Ellipse Fill="{x:Bind Tint}" />
+                            <TextBlock Text="{x:Bind Initials}" FontSize="13" FontWeight="SemiBold" Foreground="White"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <Ellipse>
+                                <Ellipse.Fill>
+                                    <ImageBrush ImageSource="{x:Bind Icon}" Stretch="UniformToFill" />
+                                </Ellipse.Fill>
+                            </Ellipse>
+                        </Grid>
+                        <TextBlock Grid.Column="1" Text="{x:Bind Name}" FontSize="15" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" MaxLines="1" />
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                            <FontIcon FontFamily="{StaticResource XcIcons}" Glyph="&#xE735;" FontSize="13" Foreground="#F5C451"
+                                      Visibility="{x:Bind IsFavorite, Mode=OneWay}" />
+                            <FontIcon FontFamily="{StaticResource XcIcons}" Glyph="&#xE76C;" FontSize="12" Foreground="{StaticResource XcText3}" />
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </local:BrowseTemplateSelector.Guild>
+            <local:BrowseTemplateSelector.Channel>
+                <DataTemplate x:DataType="local:ChannelVm">
+                    <Grid Padding="10,8" ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid Width="40" Height="40">
+                            <Border CornerRadius="12" Background="{StaticResource XcInk2}" BorderBrush="{StaticResource XcLine}" BorderThickness="1" />
+                            <FontIcon FontFamily="{StaticResource XcIcons}" Glyph="{x:Bind Glyph}" FontSize="16" Foreground="{StaticResource XcText2}" />
+                        </Grid>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="5">
+                            <TextBlock Text="{x:Bind Name}" FontSize="15" TextTrimming="CharacterEllipsis" MaxLines="1" />
+                            <!-- Who's in there: overlapping 22px avatars, then "+N" -->
+                            <StackPanel Orientation="Horizontal" Visibility="{x:Bind HasPeople}">
+                                <ItemsControl ItemsSource="{x:Bind People}" IsTabStop="False">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="local:PersonVm">
+                                            <Grid Width="24" Height="24" Margin="0,0,-6,0" ToolTipService.ToolTip="{x:Bind Name}">
+                                                <Ellipse Fill="{StaticResource XcInk1}" />
+                                                <Ellipse Margin="2" Fill="{x:Bind Tint}" />
+                                                <TextBlock Text="{x:Bind Initial}" FontSize="9" FontWeight="Bold" Foreground="White"
+                                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                <Ellipse Margin="2">
+                                                    <Ellipse.Fill>
+                                                        <ImageBrush ImageSource="{x:Bind Avatar}" Stretch="UniformToFill" />
+                                                    </Ellipse.Fill>
+                                                </Ellipse>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <TextBlock Text="{x:Bind MoreText}" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource XcText3}"
+                                           VerticalAlignment="Center" Margin="12,0,0,0" />
+                            </StackPanel>
+                        </StackPanel>
+                        <Border Grid.Column="2" Background="{StaticResource XcLiveSoft}" CornerRadius="10" Padding="8,3"
+                                VerticalAlignment="Center" Visibility="{x:Bind IsCurrent, Mode=OneWay}">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <Ellipse Width="6" Height="6" Fill="{StaticResource XcLive}" VerticalAlignment="Center" />
+                                <TextBlock x:Uid="ConnectedChip" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource XcLive}" />
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="2" Background="{StaticResource XcBrandSoft}" CornerRadius="10" Padding="10,4"
+                                VerticalAlignment="Center" Visibility="{x:Bind IsJoinable, Mode=OneWay}">
+                            <TextBlock x:Uid="JoinChip" FontSize="11" FontWeight="SemiBold" Foreground="#8FE38F" />
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </local:BrowseTemplateSelector.Channel>
+        </local:BrowseTemplateSelector>
+    </Page.Resources>
+
+    <Grid x:Name="Root" Background="{StaticResource XcInk1}">
+
+        <!-- shell -->
+        <Grid x:Name="Shell">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- Header: brand + account chip + menu -->
+            <Grid Padding="16,14,10,10" ColumnSpacing="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Image Width="28" Height="28" VerticalAlignment="Center">
+                    <Image.Source>
+                        <BitmapImage UriSource="ms-appx:///Assets/LogoMark.png" DecodePixelWidth="56" />
+                    </Image.Source>
+                </Image>
+                <TextBlock Grid.Column="1" Text="Allycord" FontFamily="{StaticResource XcDisplay}" FontSize="16" FontWeight="SemiBold"
+                           VerticalAlignment="Center" />
+
+                <Border x:Name="AccountChip" Grid.Column="2" CornerRadius="16" Background="{StaticResource XcInk2}"
+                        BorderBrush="{StaticResource XcLine}" BorderThickness="1" Padding="4,4,12,4" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Grid Width="22" Height="22">
+                            <Ellipse x:Name="UserTint" Fill="{StaticResource XcInk3}" />
+                            <TextBlock x:Name="UserInitialText" FontSize="10" FontWeight="Bold" Foreground="White"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <Ellipse>
+                                <Ellipse.Fill>
+                                    <ImageBrush x:Name="UserAvatarBrush" Stretch="UniformToFill" />
+                                </Ellipse.Fill>
+                            </Ellipse>
+                            <Ellipse x:Name="StatusDot" Width="10" Height="10" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                                     Margin="0,0,-2,-2" Stroke="{StaticResource XcInk2}" StrokeThickness="2" Fill="{StaticResource XcText3}" />
+                        </Grid>
+                        <TextBlock x:Name="StatusText" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource XcText2}"
+                                   VerticalAlignment="Center" MaxWidth="150" TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                </Border>
+
+                <Button Grid.Column="3" Style="{StaticResource XcIconButton}" VerticalAlignment="Center">
+                    <FontIcon FontFamily="{StaticResource XcIcons}" Glyph="&#xE712;" FontSize="16" />
+                    <Button.Flyout>
+                        <MenuFlyout Placement="BottomEdgeAlignedRight">
+                            <MenuFlyoutItem x:Uid="MenuOpenDiscord" Text="Open Discord" Click="OpenDiscord_Click">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon FontFamily="{StaticResource XcIcons}" Glyph="&#xE8BD;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem x:Name="DiscordAppItem" x:Uid="MenuDiscordApp" Text="Discord app…" Click="DiscordApp_Click">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon FontFamily="{StaticResource XcIcons}" Glyph="&#xE713;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutSeparator />
+                            <MenuFlyoutItem x:Name="LogoutItem" x:Uid="MenuLogout" Text="Sign out" Click="Logout_Click" />
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </Button>
+            </Grid>
+
+            <!-- status (starting, no Discord, needs auth...) -->
+            <Grid x:Name="StatusView" Grid.Row="1">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="300" Spacing="14" Margin="24,0,24,40">
+                    <Grid Width="104" Height="104" HorizontalAlignment="Center">
+                        <ProgressRing x:Name="BusyRing" Width="86" Height="86" Foreground="{StaticResource XcBrand}" IsActive="False" />
+                        <Ellipse Margin="16" Fill="{StaticResource XcBrandSoft}" />
+                        <Ellipse Margin="16" Stroke="#5A107C10" StrokeThickness="1" />
+                        <FontIcon x:Name="StatusIcon" FontFamily="{StaticResource XcIcons}" FontSize="28" Foreground="#8FE38F" />
+                    </Grid>
+                    <TextBlock x:Name="StatusTitle" Style="{StaticResource XcTitle}" FontSize="20" TextAlignment="Center" />
+                    <TextBlock x:Name="StatusDetail" Style="{StaticResource XcBody}" TextAlignment="Center" />
+                    <Button x:Name="StatusAction" Style="{StaticResource XcPrimaryButton}" HorizontalAlignment="Center"
+                            Margin="0,8,0,0" Click="StatusAction_Click" />
+                </StackPanel>
+            </Grid>
+
+            <!-- setup (bring your own Discord app) -->
+            <ScrollViewer x:Name="SetupView" Grid.Row="1" Visibility="Collapsed" x:Load="False" VerticalScrollBarVisibility="Auto">
+                <StackPanel Spacing="18" Padding="16,4,16,24" MaxWidth="480">
+                    <StackPanel Spacing="8">
+                        <TextBlock x:Uid="SetupTitle" Style="{StaticResource XcTitle}" Text="Set up your Discord app" />
+                        <TextBlock x:Uid="SetupIntro" Style="{StaticResource XcBody}" />
+                    </StackPanel>
+
+                    <StackPanel Spacing="8">
+                        <Grid Background="{StaticResource XcInk2}" CornerRadius="16" Padding="14" ColumnSpacing="12"
+                              BorderBrush="{StaticResource XcLine}" BorderThickness="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid Width="26" Height="26" VerticalAlignment="Top">
+                                <Ellipse Fill="{StaticResource XcBrandSoft}" />
+                                <TextBlock Text="1" FontSize="12" FontWeight="Bold" Foreground="#8FE38F" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Grid>
+                            <StackPanel Grid.Column="1" Spacing="10">
+                                <TextBlock x:Uid="SetupStep1" Style="{StaticResource XcBody}" Foreground="{StaticResource XcText}" />
+                                <Button Style="{StaticResource XcButton}" Padding="14,8" FontSize="13" Click="OpenPortal_Click">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBlock x:Uid="SetupOpenPortal" Text="Open Developer Portal" />
+                                        <FontIcon FontFamily="{StaticResource XcIcons}" Glyph="&#xE8A7;" FontSize="12" />
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Background="{StaticResource XcInk2}" CornerRadius="16" Padding="14" ColumnSpacing="12"
+                              BorderBrush="{StaticResource XcLine}" BorderThickness="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid Width="26" Height="26" VerticalAlignment="Top">
+                                <Ellipse Fill="{StaticResource XcBrandSoft}" />
+                                <TextBlock Text="2" FontSize="12" FontWeight="Bold" Foreground="#8FE38F" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Grid>
+                            <StackPanel Grid.Column="1" Spacing="10">
+                                <TextBlock x:Uid="SetupStep2" Style="{StaticResource XcBody}" Foreground="{StaticResource XcText}" />
+                                <Grid Background="{StaticResource XcInk0}" CornerRadius="10" Padding="12,4,4,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="http://127.0.0.1" FontFamily="Cascadia Mono,Consolas" FontSize="13" VerticalAlignment="Center" IsTextSelectionEnabled="True" />
+                                    <Button Grid.Column="1" Style="{StaticResource XcIconButton}" Width="32" Height="32" Click="CopyRedirect_Click">
+                                        <FontIcon x:Name="CopyIcon" FontFamily="{StaticResource XcIcons}" Glyph="&#xE8C8;" FontSize="14" />
+                                    </Button>
+                                </Grid>
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Background="{StaticResource XcInk2}" CornerRadius="16" Padding="14" ColumnSpacing="12"
+                              BorderBrush="{StaticResource XcLine}" BorderThickness="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid Width="26" Height="26" VerticalAlignment="Top">
+                                <Ellipse Fill="{StaticResource XcBrandSoft}" />
+                                <TextBlock Text="3" FontSize="12" FontWeight="Bold" Foreground="#8FE38F" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Grid>
+                            <StackPanel Grid.Column="1" Spacing="10">
+                                <TextBlock x:Uid="SetupStep3" Style="{StaticResource XcBody}" Foreground="{StaticResource XcText}" />
+                                <TextBox x:Name="ClientIdBox" InputScope="Number" PlaceholderText="1234567890123456789" CornerRadius="10"
+                                         Padding="12,9" FontFamily="Cascadia Mono,Consolas" />
+                                <TextBlock x:Name="SetupError" FontSize="13" Foreground="{StaticResource XcDanger}" TextWrapping="Wrap" Visibility="Collapsed" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+
+                    <Grid ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Button x:Uid="SetupSave" Style="{StaticResource XcPrimaryButton}" HorizontalAlignment="Stretch" Content="Save" Click="SetupSave_Click" />
+                        <Button x:Name="SetupCancel" x:Uid="SetupCancel" Grid.Column="1" Style="{StaticResource XcGhostButton}" Content="Cancel" Click="SetupCancel_Click" />
+                    </Grid>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- main (ready) -->
+            <Grid x:Name="MainView" Grid.Row="1" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Border Margin="16,2,16,12" Background="{StaticResource XcInk0}" CornerRadius="12" Padding="4">
+                    <Grid ColumnSpacing="4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="TabCall" x:Uid="TabCall" Style="{StaticResource XcTabButton}" Content="Call" Tag="0" Click="Tab_Click" />
+                        <Button x:Name="TabChannels" x:Uid="TabChannels" Grid.Column="1" Style="{StaticResource XcTabButton}" Content="Channels" Tag="1" Click="Tab_Click" />
+                        <Button x:Name="TabAudio" x:Uid="TabAudio" Grid.Column="2" Style="{StaticResource XcTabButton}" Content="Audio" Tag="2" Click="Tab_Click" />
+                    </Grid>
+                </Border>
+
+                <!-- call -->
+                <Grid x:Name="CallView" Grid.Row="1">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel Spacing="20" Padding="16,0,16,112">
+
+                            <Grid x:Name="HeroCard" CornerRadius="22">
+                                <Border Background="{StaticResource XcHeroGradient}" CornerRadius="22"
+                                        BorderBrush="{StaticResource XcHairlineGradient}" BorderThickness="1" />
+                                <StackPanel Padding="20,18,20,20" Spacing="4">
+                                    <TextBlock x:Name="GuildNameText" Style="{StaticResource XcCaption}" Foreground="#9BF00B" TextTrimming="CharacterEllipsis" />
+                                    <TextBlock x:Name="ChannelNameText" FontFamily="{StaticResource XcDisplay}" FontSize="26" FontWeight="SemiBold"
+                                               TextTrimming="CharacterEllipsis" MaxLines="1" />
+                                    <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,8,0,0">
+                                        <Ellipse Width="8" Height="8" Fill="{StaticResource XcLive}" VerticalAlignment="Center" />
+                                        <TextBlock x:Name="CallTimerText" FontFamily="{StaticResource XcDisplay}" FontSize="14" FontWeight="SemiBold"
+                                                   Foreground="{StaticResource XcLive}" Typography.NumeralAlignment="Tabular" VerticalAlignment="Center" />
+                                        <TextBlock Text="·" Foreground="#6E9E6E" VerticalAlignment="Center" />
+                                        <TextBlock x:Name="MemberCountText" FontSize="14" Foreground="#CFE6CF" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+
+                            <Grid x:Name="EmptyCard" CornerRadius="22">
+                                <Border Background="{StaticResource XcInk2}" CornerRadius="22" BorderBrush="{StaticResource XcLine}" BorderThickness="1" />
+                                <StackPanel Padding="24,28" Spacing="10">
+                                    <Grid Width="64" Height="64" HorizontalAlignment="Center" Margin="0,0,0,6">
+                                        <Ellipse Fill="{StaticResource XcBrandSoft}" />
+                                        <FontIcon FontFamily="{StaticResource XcIcons}" Glyph="&#xE767;" FontSize="26" Foreground="#8FE38F" />
+                                    </Grid>
+                                    <TextBlock x:Uid="EmptyTitle" Style="{StaticResource XcTitle}" FontSize="18" TextAlignment="Center" />
+                                    <TextBlock x:Uid="EmptyBody" Style="{StaticResource XcBody}" TextAlignment="Center" />
+                                    <Button x:Uid="EmptyAction" Style="{StaticResource XcPrimaryButton}" HorizontalAlignment="Center"
+                                            Margin="0,8,0,0" Click="GoChannels_Click" />
+                                </StackPanel>
+                            </Grid>
+
+                            <StackPanel x:Name="MembersSection" Spacing="8">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock x:Uid="InCall" Style="{StaticResource XcCaption}" VerticalAlignment="Center" />
+                                    <Border Background="{StaticResource XcInk3}" CornerRadius="8" Padding="7,1">
+                                        <TextBlock x:Name="MembersCountChip" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource XcText2}" />
+                                    </Border>
+                                </StackPanel>
+                                <GridView x:Name="MembersGrid" ItemsSource="{x:Bind Members}" SelectionMode="None" IsItemClickEnabled="True"
+                                          ItemClick="Member_ItemClick" ItemContainerStyle="{StaticResource XcGridItem}" Margin="-6,0"
+                                          ScrollViewer.VerticalScrollMode="Disabled" SizeChanged="MembersGrid_SizeChanged">
+                                    <GridView.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <ItemsWrapGrid Orientation="Horizontal" ItemWidth="110" />
+                                        </ItemsPanelTemplate>
+                                    </GridView.ItemsPanel>
+                                    <GridView.ItemTemplate>
+                                        <DataTemplate x:DataType="local:MemberVm">
+                                            <StackPanel Padding="4,12,4,10" Spacing="8">
+                                                <Grid Width="68" Height="68" HorizontalAlignment="Center">
+                                                    <!-- x:Bind to UIElement.Scale (Vector3) crashes CoreCLR on UWP; glow is opacity-only. -->
+                                                    <Ellipse Fill="{StaticResource XcLiveSoft}" Opacity="{x:Bind SpeakingOpacity, Mode=OneWay}">
+                                                    </Ellipse>
+                                                    <Ellipse Margin="3" Stroke="{StaticResource XcLive}" StrokeThickness="2.5"
+                                                             Opacity="{x:Bind SpeakingOpacity, Mode=OneWay}">
+                                                    </Ellipse>
+                                                    <Grid Margin="8" Opacity="{x:Bind AvatarOpacity, Mode=OneWay}">
+                                                        <Ellipse Fill="{x:Bind Tint}" />
+                                                        <TextBlock Text="{x:Bind Initial, Mode=OneWay}" FontFamily="{StaticResource XcDisplay}" FontWeight="SemiBold"
+                                                                   FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                        <Ellipse>
+                                                            <Ellipse.Fill>
+                                                                <ImageBrush ImageSource="{x:Bind Avatar, Mode=OneWay}" Stretch="UniformToFill" />
+                                                            </Ellipse.Fill>
+                                                        </Ellipse>
+                                                    </Grid>
+                                                    <Grid Width="24" Height="24" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,1,1"
+                                                          Visibility="{x:Bind HasBadge, Mode=OneWay}">
+                                                        <Ellipse Fill="{StaticResource XcInk1}" />
+                                                        <Ellipse Margin="2.5" Fill="{StaticResource XcDanger}" />
+                                                        <FontIcon FontFamily="{StaticResource XcIcons}" Glyph="{x:Bind BadgeGlyph, Mode=OneWay}" FontSize="10" Foreground="White" />
+                                                    </Grid>
+                                                </Grid>
+                                                <TextBlock Text="{x:Bind Name, Mode=OneWay}" FontSize="12" FontWeight="SemiBold" TextAlignment="Center"
+                                                           TextTrimming="CharacterEllipsis" MaxLines="1" Foreground="{StaticResource XcText2}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridView.ItemTemplate>
+                                </GridView>
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- Dock: always within thumb reach, fades the list underneath -->
+                    <Grid VerticalAlignment="Bottom" Background="{StaticResource XcDockFade}" Padding="16,32,16,16">
+                        <Grid ColumnSpacing="10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Button x:Name="MuteButton" Style="{StaticResource XcDockButton}" Click="Mute_Click">
+                                <Grid>
+                                    <StackPanel Spacing="6" VerticalAlignment="Center">
+                                        <FontIcon x:Name="MuteIcon" FontFamily="{StaticResource XcIcons}" Glyph="&#xE720;" FontSize="20" />
+                                        <TextBlock x:Name="MuteLabel" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" />
+                                    </StackPanel>
+                                    <TextBlock x:Name="HintY" Text="Y" FontSize="10" FontWeight="Bold" Foreground="{StaticResource XcText3}"
+                                               HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-14,-16,0" Visibility="Collapsed" />
+                                </Grid>
+                            </Button>
+                            <Button x:Name="DeafButton" Grid.Column="1" Style="{StaticResource XcDockButton}" Click="Deaf_Click">
+                                <Grid>
+                                    <StackPanel Spacing="6" VerticalAlignment="Center">
+                                        <Grid HorizontalAlignment="Center">
+                                            <FontIcon FontFamily="{StaticResource XcIcons}" Glyph="&#xE7F6;" FontSize="20" />
+                                            <Rectangle x:Name="DeafSlash" Width="2.5" Height="26" RadiusX="1.25" RadiusY="1.25"
+                                                       Fill="{StaticResource XcDanger}" RenderTransformOrigin="0.5,0.5" Visibility="Collapsed">
+                                                <Rectangle.RenderTransform>
+                                                    <RotateTransform Angle="-45" />
+                                                </Rectangle.RenderTransform>
+                                            </Rectangle>
+                                        </Grid>
+                                        <TextBlock x:Name="DeafLabel" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" />
+                                    </StackPanel>
+                                    <TextBlock x:Name="HintX" Text="X" FontSize="10" FontWeight="Bold" Foreground="{StaticResource XcText3}"
+                                               HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-14,-16,0" Visibility="Collapsed" />
+                                </Grid>
+                            </Button>
+                            <Button x:Name="LeaveButton" Grid.Column="2" Style="{StaticResource XcDockButton}" Background="{StaticResource XcDangerSoft}"
+                                    BorderBrush="#40FF5B61" Foreground="{StaticResource XcDanger}" Click="Leave_Click">
+                                <StackPanel Spacing="6" VerticalAlignment="Center">
+                                    <FontIcon FontFamily="{StaticResource XcIcons}" Glyph="&#xE778;" FontSize="20" />
+                                    <TextBlock x:Uid="LeaveLabel" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+
+                <!-- channels -->
+                <Grid x:Name="ChannelsView" Grid.Row="1" Visibility="Collapsed" x:Load="False">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Inside a server: back, name, favorite -->
+                    <Grid x:Name="GuildHeader" Padding="10,0,12,8" ColumnSpacing="6" Visibility="Collapsed">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Button Style="{StaticResource XcIconButton}" Click="BackToServers_Click">
+                            <FontIcon FontFamily="{StaticResource XcIcons}" Glyph="&#xE72B;" FontSize="15" />
+                        </Button>
+                        <TextBlock x:Name="OpenGuildText" Grid.Column="1" Style="{StaticResource XcTitle}" FontSize="18" VerticalAlignment="Center"
+                                   TextTrimming="CharacterEllipsis" MaxLines="1" />
+                        <Button x:Name="FavoriteButton" Grid.Column="2" Style="{StaticResource XcButton}" Padding="12,7" FontSize="12" Click="Favorite_Click">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon x:Name="FavoriteIcon" FontFamily="{StaticResource XcIcons}" Glyph="&#xE734;" FontSize="13" />
+                                <TextBlock x:Name="FavoriteText" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+
+                    <TextBox x:Name="SearchBox" Grid.Row="1" Margin="16,0,16,6" CornerRadius="12" Padding="38,9,12,9"
+                             TextChanged="SearchBox_TextChanged" IsSpellCheckEnabled="False" />
+                    <FontIcon Grid.Row="1" FontFamily="{StaticResource XcIcons}" Glyph="&#xE721;" FontSize="14" Foreground="{StaticResource XcText3}"
+                              HorizontalAlignment="Left" Margin="30,0,0,6" IsHitTestVisible="False" />
+
+                    <ListView x:Name="BrowseList" Grid.Row="2" ItemsSource="{x:Bind BrowseRows}" ItemTemplateSelector="{StaticResource BrowseSelector}"
+                              SelectionMode="None" IsItemClickEnabled="True" ItemClick="Browse_ItemClick"
+                              ItemContainerStyle="{StaticResource XcListItem}" Padding="8,0,8,16"
+                              ContainerContentChanging="BrowseList_ContainerContentChanging" />
+                    <ProgressRing x:Name="BrowseProgress" Grid.Row="2" Width="32" Height="32" Foreground="{StaticResource XcBrand}"
+                                  VerticalAlignment="Top" Margin="0,32,0,0" />
+                    <TextBlock x:Name="BrowseError" Grid.Row="2" Style="{StaticResource XcBody}" Margin="24,32,24,0" TextAlignment="Center"
+                               VerticalAlignment="Top" Visibility="Collapsed" />
+                </Grid>
+
+                <!-- audio -->
+                <ScrollViewer x:Name="AudioView" Grid.Row="1" Visibility="Collapsed" x:Load="False" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Spacing="10" Padding="16,0,16,20">
+                        <Grid Background="{StaticResource XcInk2}" CornerRadius="18" Padding="16,14,16,6" BorderBrush="{StaticResource XcLine}" BorderThickness="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid Width="36" Height="36">
+                                    <Border CornerRadius="11" Background="{StaticResource XcBrandSoft}" />
+                                    <FontIcon FontFamily="{StaticResource XcIcons}" Glyph="&#xE720;" FontSize="16" Foreground="#8FE38F" />
+                                </Grid>
+                                <TextBlock x:Uid="MicCard" Grid.Column="1" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                <TextBlock x:Name="InputVolumeText" Grid.Column="2" FontFamily="{StaticResource XcDisplay}" FontSize="15" FontWeight="SemiBold"
+                                           Typography.NumeralAlignment="Tabular" VerticalAlignment="Center" />
+                            </Grid>
+                            <Slider x:Name="InputSlider" Grid.Row="1" Margin="0,6,0,0" Minimum="0" Maximum="100" StepFrequency="1" SmallChange="5" LargeChange="10"
+                                    ValueChanged="InputSlider_ValueChanged" />
+                        </Grid>
+
+                        <Grid Background="{StaticResource XcInk2}" CornerRadius="18" Padding="16,14,16,6" BorderBrush="{StaticResource XcLine}" BorderThickness="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid Width="36" Height="36">
+                                    <Border CornerRadius="11" Background="{StaticResource XcBrandSoft}" />
+                                    <FontIcon FontFamily="{StaticResource XcIcons}" Glyph="&#xE767;" FontSize="16" Foreground="#8FE38F" />
+                                </Grid>
+                                <TextBlock x:Uid="OutputCard" Grid.Column="1" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                <TextBlock x:Name="OutputVolumeText" Grid.Column="2" FontFamily="{StaticResource XcDisplay}" FontSize="15" FontWeight="SemiBold"
+                                           Typography.NumeralAlignment="Tabular" VerticalAlignment="Center" />
+                            </Grid>
+                            <Slider x:Name="OutputSlider" Grid.Row="1" Margin="0,6,0,0" Minimum="0" Maximum="200" StepFrequency="1" SmallChange="5" LargeChange="10"
+                                    ValueChanged="OutputSlider_ValueChanged" />
+                        </Grid>
+
+                        <StackPanel Spacing="10" Margin="0,10,0,0">
+                            <TextBlock x:Uid="ShortcutsCaption" Style="{StaticResource XcCaption}" Margin="4,0" />
+                            <Grid Background="{StaticResource XcInk2}" CornerRadius="18" Padding="16,6" BorderBrush="{StaticResource XcLine}" BorderThickness="1">
+                                <StackPanel>
+                                    <Grid Padding="0,10" ColumnSpacing="12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="56" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Border Background="{StaticResource XcInk0}" CornerRadius="12" Width="24" Height="24" HorizontalAlignment="Left">
+                                            <TextBlock Text="Y" FontSize="12" FontWeight="Bold" Foreground="#F5C451" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Border>
+                                        <TextBlock x:Uid="ShortcutMute" Grid.Column="1" FontSize="14" VerticalAlignment="Center" />
+                                    </Grid>
+                                    <Rectangle Height="1" Fill="{StaticResource XcLine}" />
+                                    <Grid Padding="0,10" ColumnSpacing="12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="56" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Border Background="{StaticResource XcInk0}" CornerRadius="12" Width="24" Height="24" HorizontalAlignment="Left">
+                                            <TextBlock Text="X" FontSize="12" FontWeight="Bold" Foreground="#4FA3FF" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Border>
+                                        <TextBlock x:Uid="ShortcutDeafen" Grid.Column="1" FontSize="14" VerticalAlignment="Center" />
+                                    </Grid>
+                                    <Rectangle Height="1" Fill="{StaticResource XcLine}" />
+                                    <Grid Padding="0,10" ColumnSpacing="12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="56" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Orientation="Horizontal" Spacing="4">
+                                            <Border Background="{StaticResource XcInk0}" CornerRadius="6" Height="24" Padding="5,0">
+                                                <TextBlock Text="LB" FontSize="10" FontWeight="Bold" Foreground="{StaticResource XcText2}" VerticalAlignment="Center" />
+                                            </Border>
+                                            <Border Background="{StaticResource XcInk0}" CornerRadius="6" Height="24" Padding="5,0">
+                                                <TextBlock Text="RB" FontSize="10" FontWeight="Bold" Foreground="{StaticResource XcText2}" VerticalAlignment="Center" />
+                                            </Border>
+                                        </StackPanel>
+                                        <TextBlock x:Uid="ShortcutTabs" Grid.Column="1" FontSize="14" VerticalAlignment="Center" />
+                                    </Grid>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+
+        <!-- pinned overlay (Game Bar closed, widget pinned) -->
+        <Grid x:Name="PinnedView" Visibility="Collapsed" x:Load="False" Padding="8" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <Border Background="{StaticResource XcGlass}" CornerRadius="26" Padding="5" BorderBrush="#26FFFFFF" BorderThickness="1">
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <Grid Width="40" Height="40">
+                        <Ellipse x:Name="PinnedMicBg" Fill="{StaticResource XcInk3}" />
+                        <FontIcon x:Name="PinnedMicIcon" FontFamily="{StaticResource XcIcons}" Glyph="&#xE720;" FontSize="16" />
+                    </Grid>
+                    <ItemsControl x:Name="PinnedMembers" ItemsSource="{x:Bind Members}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="4" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="local:MemberVm">
+                                <Grid Width="40" Height="40">
+                                    <Ellipse Stroke="{StaticResource XcLive}" StrokeThickness="2.5" Opacity="{x:Bind SpeakingOpacity, Mode=OneWay}">
+                                    </Ellipse>
+                                    <Grid Margin="4" Opacity="{x:Bind PinnedOpacity, Mode=OneWay}">
+                                        <Ellipse Fill="{x:Bind Tint}" />
+                                        <TextBlock Text="{x:Bind Initial, Mode=OneWay}" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <Ellipse>
+                                            <Ellipse.Fill>
+                                                <ImageBrush ImageSource="{x:Bind Avatar, Mode=OneWay}" Stretch="UniformToFill" />
+                                            </Ellipse.Fill>
+                                        </Ellipse>
+                                    </Grid>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <TextBlock x:Name="PinnedIdleText" x:Uid="PinnedIdle" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource XcText2}"
+                               VerticalAlignment="Center" Margin="6,0,12,0" />
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- toast -->
+        <Border x:Name="Toast" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="16,0,16,104" Background="{StaticResource XcInk3}"
+                BorderBrush="{StaticResource XcLine}" BorderThickness="1" CornerRadius="14" Padding="14,6,6,6" Opacity="0" IsHitTestVisible="False">
+            <Border.OpacityTransition>
+                <ScalarTransition Duration="0:0:0.2" />
+            </Border.OpacityTransition>
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <FontIcon x:Name="ToastIcon" FontFamily="{StaticResource XcIcons}" Glyph="&#xE783;" FontSize="14" Foreground="{StaticResource XcDanger}" VerticalAlignment="Center" />
+                <TextBlock x:Name="ToastText" FontSize="13" TextWrapping="Wrap" MaxWidth="240" VerticalAlignment="Center" Margin="0,4" />
+                <Button x:Name="ToastAction" Style="{StaticResource XcButton}" Background="{StaticResource XcBrandSoft}" Foreground="#8FE38F"
+                        Padding="12,6" FontSize="13" Click="ToastAction_Click" Visibility="Collapsed" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</Page>

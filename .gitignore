@@ -4,6 +4,6 @@ AppPackages/
 BundleArtifacts/
 *.user
 .vs/
-src/Xcord.Widget/Bridge/
+src/Allycord.Widget/Bridge/
 *.pfx
 dist/

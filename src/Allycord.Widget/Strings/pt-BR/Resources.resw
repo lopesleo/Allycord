@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="MicOn" xml:space="preserve"><value>Microfone</value></data>
+  <data name="MicOff" xml:space="preserve"><value>Mutado</value></data>
+  <data name="SoundOn" xml:space="preserve"><value>Áudio</value></data>
+  <data name="SoundOff" xml:space="preserve"><value>Surdo</value></data>
+  <data name="Status_Online" xml:space="preserve"><value>Conectado</value></data>
+  <data name="Status_starting" xml:space="preserve"><value>Iniciando…</value></data>
+  <data name="Status_connecting" xml:space="preserve"><value>Procurando o Discord…</value></data>
+  <data name="Status_bridge_failed" xml:space="preserve"><value>Algo travou</value></data>
+  <data name="Status_bridge_failed_Detail" xml:space="preserve"><value>O serviço em segundo plano do Allycord não respondeu. Tente de novo.</value></data>
+  <data name="Status_no_discord" xml:space="preserve"><value>O Discord está fechado</value></data>
+  <data name="Status_no_discord_Detail" xml:space="preserve"><value>Abra o app do Discord no PC e o Allycord conecta sozinho.</value></data>
+  <data name="Status_needs_auth" xml:space="preserve"><value>Falta um clique</value></data>
+  <data name="Status_needs_auth_Detail" xml:space="preserve"><value>O Discord vai pedir para autorizar o Allycord. Só desta vez.</value></data>
+  <data name="Status_authorizing" xml:space="preserve"><value>Aprove no Discord</value></data>
+  <data name="Status_authorizing_Detail" xml:space="preserve"><value>Abriu uma janela de autorização no app do Discord. Vá até ela e clique em Autorizar.</value></data>
+  <data name="Status_needs_setup" xml:space="preserve"><value>Configuração</value></data>
+  <data name="Retry" xml:space="preserve"><value>Tentar de novo</value></data>
+  <data name="OpenDiscord" xml:space="preserve"><value>Abrir Discord</value></data>
+  <data name="Connect" xml:space="preserve"><value>Conectar</value></data>
+  <data name="AuthFailed" xml:space="preserve"><value>A autorização falhou:</value></data>
+  <data name="AuthNotTester" xml:space="preserve"><value>A conta logada no Discord não é dona do app configurado. Troque de conta, adicione esta em App Testers ou configure um app novo (menu → App do Discord).</value></data>
+  <data name="AuthNotPublicClient" xml:space="preserve"><value>Ative Public Client na página OAuth2 do seu app, salve e tente de novo.</value></data>
+  <data name="OnePerson" xml:space="preserve"><value>1 pessoa</value></data>
+  <data name="People" xml:space="preserve"><value>{0} pessoas</value></data>
+  <data name="MemberVolume" xml:space="preserve"><value>Volume</value></data>
+  <data name="MuteForMe" xml:space="preserve"><value>Silenciar para mim</value></data>
+  <data name="NoVoiceChannels" xml:space="preserve"><value>Nenhum canal de voz disponível aqui.</value></data>
+  <data name="SetupInvalidId" xml:space="preserve"><value>O Discord não reconheceu esse Client ID. É o número de 17 a 20 dígitos em OAuth2 → Client ID.</value></data>
+  <data name="MenuOpenDiscord.Text" xml:space="preserve"><value>Abrir Discord</value></data>
+  <data name="MenuDiscordApp.Text" xml:space="preserve"><value>App do Discord</value></data>
+  <data name="MenuLogout.Text" xml:space="preserve"><value>Desconectar conta</value></data>
+  <data name="SetupTitle.Text" xml:space="preserve"><value>Conecte o Allycord ao seu Discord</value></data>
+  <data name="SetupIntro.Text" xml:space="preserve"><value>O Discord só deixa apps seus controlarem a voz, então o Allycord usa um app grátis criado por você. Dois minutos, uma vez só.</value></data>
+  <data name="SetupStep1.Text" xml:space="preserve"><value>Crie um app no Discord Developer Portal: New Application, qualquer nome.</value></data>
+  <data name="SetupStep2.Text" xml:space="preserve"><value>Abra OAuth2, ative Public Client, adicione este redirect e clique em Save Changes.</value></data>
+  <data name="SetupStep3.Text" xml:space="preserve"><value>Copie o Client ID dessa mesma página e cole aqui.</value></data>
+  <data name="SetupOpenPortal.Text" xml:space="preserve"><value>Abrir Developer Portal</value></data>
+  <data name="SetupSave.Content" xml:space="preserve"><value>Salvar e conectar</value></data>
+  <data name="SetupCancel.Content" xml:space="preserve"><value>Cancelar</value></data>
+  <data name="TabCall.Content" xml:space="preserve"><value>Chamada</value></data>
+  <data name="TabChannels.Content" xml:space="preserve"><value>Canais</value></data>
+  <data name="TabAudio.Content" xml:space="preserve"><value>Áudio</value></data>
+  <data name="EmptyTitle.Text" xml:space="preserve"><value>Você não está em chamada</value></data>
+  <data name="EmptyBody.Text" xml:space="preserve"><value>Escolha um canal de voz e entre sem sair do jogo.</value></data>
+  <data name="EmptyAction.Content" xml:space="preserve"><value>Ver canais</value></data>
+  <data name="InCall.Text" xml:space="preserve"><value>NA CHAMADA</value></data>
+  <data name="LeaveLabel.Text" xml:space="preserve"><value>Sair</value></data>
+  <data name="VoiceChannels.Text" xml:space="preserve"><value>CANAIS DE VOZ</value></data>
+  <data name="ConnectedChip.Text" xml:space="preserve"><value>Você está aqui</value></data>
+  <data name="MicCard.Text" xml:space="preserve"><value>Microfone</value></data>
+  <data name="OutputCard.Text" xml:space="preserve"><value>Saída</value></data>
+  <data name="ShortcutsCaption.Text" xml:space="preserve"><value>CONTROLE</value></data>
+  <data name="ShortcutMute.Text" xml:space="preserve"><value>Mutar / desmutar</value></data>
+  <data name="ShortcutDeafen.Text" xml:space="preserve"><value>Ensurdecer / ouvir</value></data>
+  <data name="ShortcutTabs.Text" xml:space="preserve"><value>Trocar de aba</value></data>
+  <data name="PinnedIdle.Text" xml:space="preserve"><value>Fora de chamada</value></data>
+  <data name="RecentsCaption" xml:space="preserve"><value>RECENTES</value></data>
+  <data name="FavoritesCaption" xml:space="preserve"><value>FAVORITOS</value></data>
+  <data name="ServersCaption" xml:space="preserve"><value>TODOS OS SERVIDORES</value></data>
+  <data name="SearchServers" xml:space="preserve"><value>Buscar servidor</value></data>
+  <data name="SearchChannels" xml:space="preserve"><value>Buscar canal</value></data>
+  <data name="NothingFound" xml:space="preserve"><value>Nada encontrado para “{0}”.</value></data>
+  <data name="NoServers" xml:space="preserve"><value>Você ainda não está em nenhum servidor.</value></data>
+  <data name="Favorite" xml:space="preserve"><value>Favoritar</value></data>
+  <data name="Favorited" xml:space="preserve"><value>Favorito</value></data>
+  <data name="LeftChannel" xml:space="preserve"><value>Você saiu de {0}</value></data>
+  <data name="Undo" xml:space="preserve"><value>Voltar</value></data>
+  <data name="JoinChip.Text" xml:space="preserve"><value>Entrar</value></data>
+</root>

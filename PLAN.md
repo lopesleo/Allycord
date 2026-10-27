@@ -1,4 +1,4 @@
-# Xcord — Discord para o Xbox Game Bar (ROG Xbox Ally X)
+# Allycord — Discord para o Xbox Game Bar (ROG Xbox Ally X)
 
 Port do [Discord-Lite](../../Discord-Lite) (plugin Decky do Steam Deck) para um widget do Xbox Game Bar.
 
@@ -10,7 +10,7 @@ named pipe do Discord (`\\.\pipe\discord-ipc-0`). Por isso o pacote leva um proc
 
 ```
 ┌──────────────────────────┐  AppService (ValueSet)  ┌───────────────────────────┐  named pipe  ┌─────────┐
-│ Xcord.Widget (UWP)       │ ◄─────────────────────► │ Xcord.Bridge (.NET 9)     │ ◄──────────► │ Discord │
+│ Allycord.Widget (UWP)       │ ◄─────────────────────► │ Allycord.Bridge (.NET 9)     │ ◄──────────► │ Discord │
 │ XAML no Game Bar         │  req/resp + eventos     │ full-trust, sem janela    │  RPC (IPC)   │ desktop │
 │ renderiza o estado       │                         │ OAuth PKCE, estado de voz │              └─────────┘
 └──────────────────────────┘                         └───────────────────────────┘
@@ -18,10 +18,10 @@ named pipe do Discord (`\\.\pipe\discord-ipc-0`). Por isso o pacote leva um proc
 
 Equivalência com o Discord-Lite:
 
-| Discord-Lite (Deck)              | Xcord (Windows)                                      |
+| Discord-Lite (Deck)              | Allycord (Windows)                                      |
 | -------------------------------- | ---------------------------------------------------- |
-| `src/index.tsx` (React, @decky/ui) | `Xcord.Widget` (UWP XAML, foco por controle/XYFocus) |
-| `main.py` + `callable()`          | `Xcord.Bridge` + AppService                          |
+| `src/index.tsx` (React, @decky/ui) | `Allycord.Widget` (UWP XAML, foco por controle/XYFocus) |
+| `main.py` + `callable()`          | `Allycord.Bridge` + AppService                          |
 | Unix socket `discord-ipc-N`       | Named pipe `\\.\pipe\discord-ipc-N`                  |
 | `auth/oauth.py` (PKCE)            | `Discord/OAuth.cs` (PKCE + refresh token)            |
 | `polling/voice_poller.py` (15s)   | eventos `SUBSCRIBE` em tempo real (sem polling)      |
@@ -35,8 +35,7 @@ A API RPC de voz está em beta fechado: só o dono do app e até 50 testers conv
 autorizar (`invalid_scope` para o resto), e o Discord praticamente não aprova apps para uso público.
 Por isso não há Client ID embutido: no primeiro uso o widget mostra um passo a passo (criar app no
 Developer Portal, ativar **Public Client**, redirect `http://127.0.0.1`, colar o Client ID), salvo em
-`LocalState\settings.json`. O app Deckord (`1461502476401381446`, equipe KGBTeam) segue servindo
-para o autor e os testers dele. Distribuição: GitHub Releases (zip com msix + `Install.ps1`);
+`LocalState\settings.json`. Distribuição: GitHub Releases (zip com msix + `Install.ps1`);
 Microsoft Store depois.
 
 ## Protocolo widget ⇄ bridge
