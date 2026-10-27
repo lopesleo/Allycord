@@ -82,6 +82,9 @@ if ($Release) {
     Remove-Item (Join-Path $stage 'TelemetryDependencies') -Recurse -Force -ErrorAction SilentlyContinue
     Compress-Archive -Path (Join-Path $stage '*') -DestinationPath $zip
     Remove-Item $stage -Recurse -Force
+    # install.ps1 refuses releases without this.
+    $hash = (Get-FileHash $zip -Algorithm SHA256).Hash
+    Set-Content -Path "$zip.sha256" -Value "$hash  $(Split-Path $zip -Leaf)" -Encoding ascii -NoNewline
     Write-Host "Release zip: $zip" -ForegroundColor Green
     return
 }

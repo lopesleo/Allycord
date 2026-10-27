@@ -70,10 +70,19 @@ Discord itself must be running. If it's closed, **Open Discord** starts it minim
 
 ### Install
 
-1. Download `Allycord-<version>-x64.zip` from [Releases](../../releases) and extract it.
-2. Right-click `Install.ps1` → **Run with PowerShell**. It asks for admin once to trust the package
-   certificate, then installs Allycord and its dependencies.
-3. Open Game Bar (`Win + G` or the Xbox button) → **Widgets** → **Allycord** → click the star to keep it in the menu.
+**Option 1 — one command** (also updates). Copy, paste into PowerShell, press Enter:
+
+```powershell
+irm https://raw.githubusercontent.com/lopesleo/Allycord/main/install.ps1 | iex
+```
+
+It downloads the newest release, checks its SHA256, asks for admin once to trust the package
+certificate, and installs Allycord for your user. [Read the script](install.ps1) — it's short.
+
+**Option 2 — zip.** Download `Allycord-<version>-x64.zip` from [Releases](../../releases), extract it,
+right-click `Install.ps1` → **Run with PowerShell**.
+
+Then open Game Bar (`Win + G` or the Xbox button) → **Widgets** → **Allycord** → click the star to keep it in the menu.
 
 ### Set up your Discord app (once)
 
@@ -149,9 +158,19 @@ Release, conectado e parado: bridge ~0% de CPU e ~10 MB; widget ~0,01% de CPU.
 
 ### Instalação
 
-1. Baixe `Allycord-<versão>-x64.zip` em [Releases](../../releases) e extraia.
-2. Clique com o botão direito em `Install.ps1` → **Executar com o PowerShell** (pede admin uma vez).
-3. Game Bar (`Win + G` ou botão Xbox) → **Widgets** → **Allycord** → marque a estrela.
+**Opção 1 — um comando** (também atualiza). Copie, cole no PowerShell e aperte Enter:
+
+```powershell
+irm https://raw.githubusercontent.com/lopesleo/Allycord/main/install.ps1 | iex
+```
+
+Ele baixa a release mais nova, confere o SHA256, pede admin uma vez para confiar no certificado e
+instala o Allycord para o seu usuário. [Leia o script](install.ps1) — é curto.
+
+**Opção 2 — zip.** Baixe `Allycord-<versão>-x64.zip` em [Releases](../../releases), extraia e clique com
+o botão direito em `Install.ps1` → **Executar com o PowerShell**.
+
+Depois: Game Bar (`Win + G` ou botão Xbox) → **Widgets** → **Allycord** → marque a estrela.
 
 ### Configure seu app do Discord (uma vez)
 
