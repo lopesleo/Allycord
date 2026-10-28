@@ -36,7 +36,7 @@ Press the Xbox button, and it's there. Sister project of [Discord-Lite](https://
 - **Channels** — recent channels (one tap to rejoin), favorite servers, search, and a preview of who's in each voice channel.
 - **Audio** — microphone and output volume.
 - **Pinned overlay** — pin the widget and, with Game Bar closed, a small pill over your game shows who's speaking.
-- **Controller first** — `Y` mute · `X` deafen · `LB`/`RB` switch tabs · `B` back · `≡` menu.
+- **Controller first** — `Y` mute · `X` deafen · `LT`/`RT` switch tabs · `B` back · `≡` menu.
 - English and Portuguese.
 
 <p align="center">
@@ -151,7 +151,7 @@ Aperte o botão Xbox e está lá.
 - **Canais** — recentes (um toque para voltar), servidores favoritos, busca e quem está em cada canal.
 - **Áudio** — volume do microfone e da saída.
 - **Overlay fixado** — com o widget fixado e o Game Bar fechado, uma pílula sobre o jogo mostra quem fala.
-- **Feito para controle** — `Y` mutar · `X` ensurdecer · `LB`/`RB` trocar aba · `B` voltar · `≡` menu.
+- **Feito para controle** — `Y` mutar · `X` ensurdecer · `LT`/`RT` trocar aba · `B` voltar · `≡` menu.
 
 Leve de propósito: sem animações em loop, imagens no tamanho exibido e nada de polling. Medido em
 Release, conectado e parado: bridge ~0% de CPU e ~10 MB; widget ~0,01% de CPU.

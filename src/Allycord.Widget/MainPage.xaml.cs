@@ -577,7 +577,8 @@ namespace Allycord.Widget
                     e.Handled = true;
                     await ToggleDeafAsync();
                     break;
-                case VirtualKey.GamepadLeftShoulder:
+                // Triggers, not LB/RB: Game Bar takes the bumpers to move between its own widgets.
+                case VirtualKey.GamepadLeftTrigger:
                     ShowGamepadHints();
                     e.Handled = true;
                     SelectTab((_tab + 2) % 3);
@@ -588,7 +589,7 @@ namespace Allycord.Widget
                     e.Handled = true;
                     CloseGuild();
                     break;
-                case VirtualKey.GamepadRightShoulder:
+                case VirtualKey.GamepadRightTrigger:
                     ShowGamepadHints();
                     e.Handled = true;
                     SelectTab((_tab + 1) % 3);

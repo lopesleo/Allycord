@@ -604,10 +604,10 @@
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Orientation="Horizontal" Spacing="4">
                                             <Border Background="{StaticResource XcInk0}" CornerRadius="6" Height="24" Padding="5,0">
-                                                <TextBlock Text="LB" FontSize="10" FontWeight="Bold" Foreground="{StaticResource XcText2}" VerticalAlignment="Center" />
+                                                <TextBlock Text="LT" FontSize="10" FontWeight="Bold" Foreground="{StaticResource XcText2}" VerticalAlignment="Center" />
                                             </Border>
                                             <Border Background="{StaticResource XcInk0}" CornerRadius="6" Height="24" Padding="5,0">
-                                                <TextBlock Text="RB" FontSize="10" FontWeight="Bold" Foreground="{StaticResource XcText2}" VerticalAlignment="Center" />
+                                                <TextBlock Text="RT" FontSize="10" FontWeight="Bold" Foreground="{StaticResource XcText2}" VerticalAlignment="Center" />
                                             </Border>
                                         </StackPanel>
                                         <TextBlock x:Uid="ShortcutTabs" Grid.Column="1" FontSize="14" VerticalAlignment="Center" />
